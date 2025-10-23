@@ -62,6 +62,16 @@ namespace WpfApp2
                         updateCommand.Parameters.AddWithValue("@id_type", existingId.Value);
                         updateCommand.ExecuteNonQuery();
                     }
+
+                    string updateHistory = @"
+                     INSERT INTO history (id_prod,id_benz)
+                     VALUES ('1','1')";
+                    using (var insertCommand = new NpgsqlCommand(updateHistory, conn))
+                    {
+                        insertCommand.Parameters.AddWithValue("@countfuel",'1');
+                        insertCommand.Parameters.AddWithValue("@typees",'1');
+                        insertCommand.ExecuteNonQuery();
+                    }
                 }
                 else
                 {
@@ -71,16 +81,18 @@ namespace WpfApp2
                         throw new InvalidOperationException("Нельзя списать топливо: запись не найдена в базе данных");
                     }
 
-                    string insertQuery = @"
-                        INSERT INTO typeoffuel (countfuel, typees) 
-                        VALUES (@countfuel, @typees)";
+                    // доработать так чтобы я получал айди пользователя который в сессии мне надо отобразить в истории в таблице для вывода фио должность тип действия 
+                    
+                    //string insertQuery = @"
+                    //    INSERT INTO typeoffuel (countfuel, typees) 
+                    //    VALUES (@countfuel, @typees)";
 
-                    using (var insertCommand = new NpgsqlCommand(insertQuery, conn))
-                    {
-                        insertCommand.Parameters.AddWithValue("@countfuel", newQuantity);
-                        insertCommand.Parameters.AddWithValue("@typees", fuelType);
-                        insertCommand.ExecuteNonQuery();
-                    }
+                    //using (var insertCommand = new NpgsqlCommand(insertQuery, conn))
+                    //{
+                    //    insertCommand.Parameters.AddWithValue("@countfuel", newQuantity);
+                    //    insertCommand.Parameters.AddWithValue("@typees", fuelType);
+                    //    insertCommand.ExecuteNonQuery();
+                    //}
                 }
             }
         }

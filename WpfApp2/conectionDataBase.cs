@@ -15,7 +15,7 @@ namespace WpfApp2
             using (var conn = new NpgsqlConnection(connectionString))
             {
                 conn.Open();
-                string sql = "SELECT * FROM workers";
+                string sql = "SELECT * FROM history";
                 using (var command = new NpgsqlCommand(sql, conn))
                 using (var adapter = new NpgsqlDataAdapter(command))
                 {
