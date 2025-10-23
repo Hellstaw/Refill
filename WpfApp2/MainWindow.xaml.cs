@@ -84,5 +84,16 @@ namespace WpfApp2
                 MessageBox.Show($"Ошибка загрузки истории: {ex.Message}", "Ошибка");
             }
         }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            deletefuell deletefuell = new deletefuell();
+            deletefuell.Show();
+        }
     }
 }

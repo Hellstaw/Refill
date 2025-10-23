@@ -1,27 +1,33 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace WpfApp2
 {
-    public partial class Window1 : Window
+    /// <summary>
+    /// Логика взаимодействия для deletefuell.xaml
+    /// </summary>
+    public partial class deletefuell : Window
     {
         private FuelManager fuelManager;
-
-        public Window1()
+        public deletefuell()
         {
             InitializeComponent();
             fuelManager = new FuelManager();
         }
 
-        public void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-
-        public void AddingFuell(object sender, RoutedEventArgs e)
-        {
-            // Проверяем, что выбрано тип топлива
+        private void AddingFuell(object sender, RoutedEventArgs e)
+        {// Проверяем, что выбрано тип топлива
             if (InputComboBox.SelectedItem == null)
             {
                 MessageBox.Show("Пожалуйста, выберите тип топлива!",
@@ -46,34 +52,35 @@ namespace WpfApp2
 
             try
             {
-                // Получаем текущее количество топлива (для информационного сообщения)
                 double currentQuantity = fuelManager.GetFuelQuantity(selectedFuelType);
-
-                // Добавляем или обновляем топливо в базе данных
-                fuelManager.AddFuel(selectedFuelType, quantity);
-
-                // Получаем обновленное количество
+                fuelManager.SubtractFuel(selectedFuelType, quantity);
                 double newQuantity = fuelManager.GetFuelQuantity(selectedFuelType);
 
-                MessageBox.Show($"Топливо успешно добавлено!\n" +
+                MessageBox.Show($"Топливо успешно списано!\n" +
                               $"Тип: {selectedFuelType}\n" +
-                              $"Добавлено: {quantity}\n" +
+                              $"Списано: {quantity}\n" +
                               $"Было: {currentQuantity}\n" +
                               $"Стало: {newQuantity}",
                               "Успех",
                               MessageBoxButton.OK,
                               MessageBoxImage.Information);
-
-                // Закрываем окно после успешного добавления
-                this.Close();
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при добавлении топлива: {ex.Message}",
+                MessageBox.Show($"Ошибка при списании топлива: {ex.Message}",
                               "Ошибка",
                               MessageBoxButton.OK,
                               MessageBoxImage.Error);
             }
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }
