@@ -25,7 +25,36 @@ namespace WpfApp2
             return dataTable;
         }
 
-        // Обновленный метод валидации - возвращает ID работника и ID логина
+        // Добавляем метод для получения истории операций
+        public DataTable GetOperationHistory()
+        {
+            DataTable dataTable = new DataTable();
+            using (var conn = new NpgsqlConnection(connectionString))
+            {
+                conn.Open();
+                string sql = @"
+            SELECT 
+                TO_CHAR(h.operation_date, 'DD.MM.YYYY HH24:MI') as ""Дата и время"",
+                h.worker_name as ""Работник"",
+                k.kolonka_number as ""Колонка"",
+                h.fuel_type as ""Тип топлива"",
+                h.quantity as ""Количество"",
+                h.total_amount as ""Сумма"",
+                h.payment_type as ""Тип оплаты""
+            FROM history h
+            LEFT JOIN kolonki k ON h.kolonka_id = k.id_kolonki
+            ORDER BY h.operation_date DESC";
+
+                using (var command = new NpgsqlCommand(sql, conn))
+                using (var adapter = new NpgsqlDataAdapter(command))
+                {
+                    adapter.Fill(dataTable);
+                }
+            }
+            return dataTable;
+        }
+
+        // Остальные методы остаются без изменений
         public (bool isValid, int workerId, int loginId, string firstName, string secondName) ValidatedUser(string login, string password)
         {
             using (var conn = new NpgsqlConnection(connectionString))
@@ -62,7 +91,6 @@ namespace WpfApp2
             return (false, 0, 0, string.Empty, string.Empty);
         }
 
-        // Метод для записи времени входа
         public void LogLogin(int workerId, int loginId, string firstName, string secondName)
         {
             try
@@ -90,7 +118,6 @@ namespace WpfApp2
             }
         }
 
-        // Метод для записи времени выхода (надежная версия)
         public void LogLogout(int workerId, int loginId)
         {
             try
@@ -99,7 +126,6 @@ namespace WpfApp2
                 {
                     conn.Open();
 
-                    // Сначала находим ID последней активной сессии
                     string findSessionQuery = @"
                 SELECT id 
                 FROM user_sessions 
@@ -123,7 +149,6 @@ namespace WpfApp2
                         }
                     }
 
-                    // Если нашли сессию, обновляем ее
                     if (sessionId.HasValue)
                     {
                         string updateQuery = @"
@@ -140,7 +165,6 @@ namespace WpfApp2
                     }
                     else
                     {
-                        // Если не нашли активной сессии, можно записать новую с обоими временами
                         string insertQuery = @"
                     INSERT INTO user_sessions (worker_id, login_id, username, login_time, logout_time) 
                     VALUES (@workerId, @loginId, 'Auto-generated', @logoutTime, @logoutTime)";
@@ -161,7 +185,6 @@ namespace WpfApp2
             }
         }
 
-        // Метод для получения истории сессий
         public DataTable GetSessionHistory()
         {
             DataTable dataTable = new DataTable();
@@ -193,30 +216,5 @@ namespace WpfApp2
             }
             return dataTable;
         }
-        //public DataTable GetAvailableFuel()
-        //{
-        //    DataTable dataTable = new DataTable();
-        //    using (var conn = new NpgsqlConnection(connectionString))
-        //    {
-        //        conn.Open();
-
-        //        // Предполагаемая структура - адаптируйте под вашу БД
-        //        string sql = @"SELECT 
-        //              idfuel, 
-        //              typefuel, 
-        //              quantity,
-        //              price  -- если есть цена
-        //              FROM fuel 
-        //              WHERE quantity > 0 
-        //              ORDER BY typefuel";
-
-        //        using (var command = new NpgsqlCommand(sql, conn))
-        //        using (var adapter = new NpgsqlDataAdapter(command))
-        //        {
-        //            adapter.Fill(dataTable);
-        //        }
-        //    }
-        //    return dataTable;
-        //}
     }
 }

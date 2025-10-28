@@ -16,13 +16,13 @@
                           Opacity="0.1" 
                           BlurRadius="12" 
                           Color="Black"/>
-        
+
         <DropShadowEffect x:Key="ButtonShadow" 
                           ShadowDepth="0" 
                           Opacity="0.2" 
                           BlurRadius="8" 
                           Color="Black"/>
-        
+
         <!-- Стили -->
         <Style x:Key="ModernButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
@@ -47,6 +47,28 @@
             <Setter Property="Width" Value="70"/>
             <Setter Property="IsReadOnly" Value="True"/>
         </Style>
+
+        <!-- Стиль для кнопки обновления -->
+        <Style x:Key="RefreshButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#3B82F6"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <!-- Стиль для кнопки выхода -->
+        <Style x:Key="ExitButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#EF4444"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -70,15 +92,36 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- Заголовок -->
-                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
-                    <Rectangle Width="24" Height="24" Fill="#3B82F6" Margin="0,0,12,0" RadiusX="4" RadiusY="4"/>
-                    <TextBlock Text="Управление колонками" 
-                               FontSize="20" 
-                               FontWeight="SemiBold" 
-                               Foreground="#1E293B"
-                               VerticalAlignment="Center"/>
-                </StackPanel>
+                <!-- Заголовок и кнопка выхода -->
+                <Grid Grid.Row="0" Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Заголовок -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Rectangle Width="24" Height="24" Fill="#3B82F6" Margin="0,0,12,0" RadiusX="4" RadiusY="4"/>
+                        <TextBlock Text="Управление колонками" 
+                                   FontSize="20" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="#1E293B"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Кнопка выхода -->
+                    <Border Grid.Column="1" 
+                            Background="#FEF2F2" 
+                            CornerRadius="6"
+                            Cursor="Hand"
+                            Effect="{StaticResource ButtonShadow}">
+                        <Button x:Name="ExitButton"
+                                Content="🚪 Выход"
+                                Style="{StaticResource ExitButton}"
+                                Click="ExitButton_Click"
+                                ToolTip="Выйти из системы"/>
+                    </Border>
+                </Grid>
 
                 <!-- Колонки -->
                 <Grid Grid.Row="1" Margin="0,0,0,20">
@@ -170,7 +213,7 @@
                             Orientation="Horizontal" 
                             HorizontalAlignment="Center"
                             Margin="0,10,0,0">
-                    
+
                     <!-- Кнопка Заправить -->
                     <Border Background="#3B82F6" 
                             CornerRadius="8"
@@ -209,15 +252,45 @@
         <!-- Основное содержание -->
         <ScrollViewer Grid.Row="1" Background="#F8FAFC" VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="30">
-                <!-- Заголовок секции -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
-                    <Rectangle Width="4" Height="20" Fill="#3B82F6" Margin="0,0,12,0" RadiusX="2" RadiusY="2"/>
-                    <TextBlock Text="История операций" 
+                <!-- Заголовок секции с кнопкой обновления -->
+                <Grid Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Иконка -->
+                    <Rectangle Grid.Column="0" 
+                               Width="4" 
+                               Height="20" 
+                               Fill="#3B82F6" 
+                               Margin="0,0,12,0" 
+                               RadiusX="2" 
+                               RadiusY="2"
+                               VerticalAlignment="Center"/>
+
+                    <!-- Заголовок -->
+                    <TextBlock Grid.Column="1" 
+                               Text="История операций" 
                                FontSize="18" 
                                FontWeight="SemiBold" 
                                Foreground="#1E293B"
                                VerticalAlignment="Center"/>
-                </StackPanel>
+
+                    <!-- Кнопка обновления -->
+                    <Border Grid.Column="2" 
+                            Background="#F1F5F9" 
+                            CornerRadius="6"
+                            Cursor="Hand"
+                            Effect="{StaticResource ButtonShadow}">
+                        <Button x:Name="RefreshButton"
+                                Content="🔄 Обновить"
+                                Style="{StaticResource RefreshButton}"
+                                Click="RefreshButton_Click"
+                                ToolTip="Обновить данные таблицы"/>
+                    </Border>
+                </Grid>
 
                 <!-- Карточка с данными -->
                 <Border Background="White" 
@@ -231,7 +304,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        
+
                         <!-- Заголовок таблицы -->
                         <Border Grid.Row="0" 
                                 Background="#F8FAFC" 
@@ -244,7 +317,7 @@
                                        FontWeight="SemiBold"
                                        Foreground="#475569"/>
                         </Border>
-                        
+
                         <!-- Таблица -->
                         <DataGrid x:Name="UsersDataGrid" 
                                   Grid.Row="1"
@@ -277,7 +350,7 @@
                            VerticalAlignment="Center"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <Rectangle Width="6" Height="6" Fill="#10B981" RadiusX="3" RadiusY="3" Margin="0,0,8,0"/>
-                    <TextBlock Text="v1.1 • Стабильная версия" 
+                    <TextBlock Text="v0.7 • Стабильная версия" 
                                Foreground="#94A3B8" 
                                FontSize="11"/>
                 </StackPanel>

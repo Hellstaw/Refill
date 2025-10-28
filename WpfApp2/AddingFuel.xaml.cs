@@ -46,23 +46,8 @@ namespace WpfApp2
 
             try
             {
-                // Получаем текущее количество топлива (для информационного сообщения)
-                double currentQuantity = fuelManager.GetFuelQuantity(selectedFuelType);
-
-                // Добавляем или обновляем топливо в базе данных
+                // Добавляем топливо (сообщение показывается внутри FuelManager)
                 fuelManager.AddFuel(selectedFuelType, quantity);
-
-                // Получаем обновленное количество
-                double newQuantity = fuelManager.GetFuelQuantity(selectedFuelType);
-
-                MessageBox.Show($"Топливо успешно добавлено!\n" +
-                              $"Тип: {selectedFuelType}\n" +
-                              $"Добавлено: {quantity}\n" +
-                              $"Было: {currentQuantity}\n" +
-                              $"Стало: {newQuantity}",
-                              "Успех",
-                              MessageBoxButton.OK,
-                              MessageBoxImage.Information);
 
                 // Закрываем окно после успешного добавления
                 this.Close();
